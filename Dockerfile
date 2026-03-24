@@ -22,7 +22,8 @@ ENV HF_HUB_DISABLE_SYMLINKS=1
 ENV NUMBA_CACHE_DIR=/tmp
 ENV PORT=8000
 ENV WEB_CONCURRENCY=1
-
+RUN pip install --no-cache-dir "numpy>=1.24.0,<2.0.0"
+RUN pip install --no-cache-dir -r requirements.txt
 # Copy all application files
 COPY . .
 
