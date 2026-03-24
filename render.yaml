@@ -8,7 +8,7 @@ services:
   - type: web
     name: voicekey
     runtime: docker
-    plan: free       # free tier has 512 MB RAM — not enough for PyTorch+SpeechBrain
+    plan: free       # free tier has 512 MB RAM — not enough for PyTorch+SpeechBrai
     healthCheckPath: /healthz
     envVars:
       - key: DATABASE_URL
