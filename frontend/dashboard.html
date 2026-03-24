@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceKey | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="background-animation"></div>
+    <div class="container dashboard-container">
+
+        <header class="dashboard-header">
+            <div class="logo">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="url(#gradient)" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#4facfe" />
+                            <stop offset="100%" stop-color="#00f2fe" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M12 2v20M17 5v14M22 10v4M7 5v14M2 10v4" />
+                </svg>
+                <h2>VoiceKey System</h2>
+            </div>
+            <button class="btn-logout" onclick="logout()">Logout</button>
+        </header>
+
+        <main class="dashboard-content">
+            <div class="welcome-box glass-panel">
+                <h1 id="welcome-message">Welcome back, User</h1>
+                <p>Authentication Confidence: <span id="auth-confidence" class="highlight">0%</span></p>
+                <p>Security Risk Level: <span id="auth-risk" class="highlight green">Low</span></p>
+            </div>
+
+            <!-- Admin section — only shown when admin token is present -->
+            <div class="admin-panel glass-panel hidden" id="admin-section">
+                <h3>Admin Control Center</h3>
+                <div style="margin-bottom:0.75rem">
+                    <label style="font-size:13px;color:#aaa;display:block;margin-bottom:4px">Admin Token</label>
+                    <input type="password" id="admin-token-input" placeholder="Paste admin token here"
+                        style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;font-size:13px">
+                    <button onclick="loadAdminData()"
+                        style="margin-top:8px;padding:7px 18px;background:linear-gradient(135deg,#4facfe,#00f2fe);border:none;border-radius:8px;color:#fff;cursor:pointer;font-size:13px">
+                        Load Users
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="users-table">
+                        <thead>
+                            <tr><th>ID</th><th>Username</th><th>Registered</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="users-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast">Message</div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        window.onload = async () => {
+            const token = localStorage.getItem('voice_token');
+            if (!token) { window.location.href = '/'; return; }
+
+            document.getElementById('welcome-message').innerText =
+                `Welcome back, ${localStorage.getItem('voice_username')}!`;
+
+            const conf = localStorage.getItem('voice_confidence');
+            if (conf) {
+                const pct = parseFloat(conf).toFixed(2);
+                const el = document.getElementById('auth-confidence');
+                el.innerText = `${pct}%`;
+                if (parseFloat(pct) >= 85)      el.style.color = '#4ade80';
+                else if (parseFloat(pct) >= 70) el.style.color = '#ffb84d';
+                else                            el.style.color = '#ff4b4b';
+            }
+
+            const risk = localStorage.getItem('voice_risk');
+            if (risk) {
+                const el = document.getElementById('auth-risk');
+                el.innerText = risk;
+                if (risk.includes('High'))   el.style.color = '#ff4b4b';
+                else if (risk.includes('Medium')) el.style.color = '#ffb84d';
+            }
+
+            // Show admin section (token must be entered manually)
+            document.getElementById('admin-section').classList.remove('hidden');
+        };
+
+        async function loadAdminData() {
+            const adminToken = document.getElementById('admin-token-input').value.trim();
+            if (!adminToken) { showToast('Enter the admin token first', true); return; }
+
+            try {
+                const res = await fetch('/api/admin/users', {
+                    headers: { 'x-admin-token': adminToken }
+                });
+                if (!res.ok) { showToast('Invalid admin token or request failed', true); return; }
+                const users = await res.json();
+
+                const tbody = document.getElementById('users-body');
+                tbody.innerHTML = '';
+                users.forEach(u => {
+                    const tr = document.createElement('tr');
+                    const date = u.created_at ? new Date(u.created_at).toLocaleDateString() : '—';
+                    tr.innerHTML = `
+                        <td>${u.id}</td>
+                        <td>${u.username}</td>
+                        <td>${date}</td>
+                        <td><button class="btn-delete" onclick="deleteUser(${u.id}, '${adminToken}')">Delete</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#aaa">No users registered yet</td></tr>';
+                }
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+
+        async function deleteUser(id, adminToken) {
+            if (!confirm('Delete this user? Their voice profile will be removed.')) return;
+            try {
+                const res = await fetch(`/api/admin/users/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'x-admin-token': adminToken }
+                });
+                if (res.ok) { showToast('User deleted'); loadAdminData(); }
+                else        { showToast('Failed to delete user', true); }
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

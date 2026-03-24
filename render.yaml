@@ -1,0 +1,25 @@
+databases:
+  - name: voicekey-db
+    databaseName: voicekey
+    user: voicekey
+    plan: free          # change to "starter" for persistent storage beyond 90 days
+
+services:
+  - type: web
+    name: voicekey
+    runtime: docker
+    plan: starter       # free tier has 512 MB RAM — not enough for PyTorch+SpeechBrain
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: voicekey-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: WEB_CONCURRENCY
+        value: "1"

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceKey | Biometric Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css?v=8">
+</head>
+<body>
+    <div class="background-animation"></div>
+    <div class="container">
+        
+        <header class="app-header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="url(#gradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#4facfe" />
+                            <stop offset="100%" stop-color="#00f2fe" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M12 2v20M17 5v14M22 10v4M7 5v14M2 10v4"/>
+                </svg>
+                <h1>VoiceKey</h1>
+            </div>
+            <p>Next-Generation Biometric Security</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <main class="panel-container">
+            <!-- Login Panel -->
+            <div id="login-panel" class="panel active-panel">
+                <h2>Authenticate</h2>
+                <div class="input-group">
+                    <input type="text" id="login-username" placeholder="Username (Optional for auto-detect)">
+                </div>
+                
+                <div class="challenge-box">
+                    <p class="challenge-label">Please read aloud:</p>
+                    <p class="phrase-text" id="login-phrase">Loading phrase...</p>
+                </div>
+
+                <div class="audio-controls">
+                    <button class="record-btn" id="login-record-btn">
+                        <span class="mic-icon">🎙️</span>
+                    </button>
+                    <p class="status-text" id="login-status">Click to speak (10s)</p>
+                </div>
+                
+                <div class="visualizer" id="login-visualizer">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                </div>
+            </div>
+
+            <!-- Register Panel -->
+            <div id="register-panel" class="panel">
+                <h2>Create Voice Profile</h2>
+                <div class="input-group">
+                    <input type="text" id="register-username" placeholder="Choose a Username">
+                </div>
+
+                <!-- Enrollment Progress -->
+                <div class="enroll-progress">
+                    <span class="enroll-step" id="step-dot-1">●</span>
+                    <span class="enroll-line"></span>
+                    <span class="enroll-step" id="step-dot-2">●</span>
+                    <span class="enroll-line"></span>
+                    <span class="enroll-step" id="step-dot-3">●</span>
+                </div>
+                <p class="enroll-step-label" id="enroll-step-label">Step 1 of 3 — Read aloud clearly</p>
+
+                <!-- Phrase Box — enhanced visibility -->
+                <div class="phrase-box">
+                    <p class="phrase-box__label">📢 Read this phrase aloud:</p>
+                    <p class="phrase-box__text" id="enroll-phrase">The bright morning sun rises slowly over the distant mountains, painting the sky in shades of gold and orange while birds begin to sing their gentle songs in the trees.</p>
+                    <p class="phrase-box__hint">Speak clearly and naturally while reading the phrase above.</p>
+                </div>
+
+                <div class="audio-controls">
+                    <button class="record-btn" id="register-record-btn">
+                        <span class="mic-icon">🎙️</span>
+                    </button>
+                    <p class="status-text" id="register-status">Click the mic and read the phrase aloud (15s)</p>
+                </div>
+
+                <div class="visualizer" id="register-visualizer">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    
+    <div id="toast" class="toast">Message</div>
+
+    <script src="/static/js/app.js?v=2026.3"></script>
+</body>
+</html>

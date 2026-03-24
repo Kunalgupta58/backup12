@@ -1,0 +1,23 @@
+.git
+.gitignore
+.vscode
+venv
+.venv
+env
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+*.log
+backend/temp_audio
+
+# Local databases — never ship real user data into the image
+*.db
+*.sqlite
+*.sqlite3
+
+# Dev-only scripts
+start_localhost.ps1
+start_localhost.bat

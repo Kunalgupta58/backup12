@@ -1,0 +1,42 @@
+# Secrets
+.env
+.env.*
+.env.local
+.env.*.local
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyright/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Local databases (never commit real user data)
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# Runtime artifacts
+backend/temp_audio/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# pretrained_models/ is intentionally NOT ignored here.
+# Run download_model.py to populate it, then commit the files
+# so Docker bakes them into the image (avoids runtime HF download).
